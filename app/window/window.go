@@ -10,6 +10,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"net"
 	"strconv"
 )
 
@@ -60,6 +61,11 @@ func Run() {
 
 			port, err := strconv.Atoi(port.Text)
 
+			if !isValidIP4(ip.Text) {
+				dialog.ShowInformation("Ошибка", "Поле Ip не верный", w)
+				return
+			}
+
 			if err != nil {
 				dialog.ShowInformation("Ошибка", "Поле порт должно быть строкой", w)
 				return
@@ -78,4 +84,18 @@ func Run() {
 	))
 
 	w.ShowAndRun()
+}
+
+func isValidIP4(ip string) bool {
+	parsedIP := net.ParseIP(ip)
+	if parsedIP == nil {
+		return false
+	}
+
+	ip4 := parsedIP.To4()
+	if ip4 == nil {
+		return false
+	}
+
+	return true
 }
